@@ -11,7 +11,7 @@
     "image": "java:8",
     "commit": "true",
     "changes": [
-      "EXPOSE 9090",
+      "EXPOSE 8888",
       "ENTRYPOINT ['java','-Djava.security.egd=file:/dev/./urandom','-jar','/app.jar']"
     ]
   }],
