@@ -1,0 +1,48 @@
+{
+  "variables": {
+    "project" : "{{env `PROJECT_NAME`}}",
+    "artifact_name" : "{{env `ARTIFACT_NAME`}}",
+    "dest_file" : "app.jar",
+    "azure_registry_user" : "{{env `REGISTRY_USER`}}",
+    "azure_registry_pass" : "{{env `REGISTRY_PASS`}}"
+  },
+  "builders":[{
+    "type": "docker",
+    "image": "java:8",
+    "commit": "true",
+    "changes": [
+      "EXPOSE 9090",
+      "ENTRYPOINT ['java','-Djava.security.egd=file:/dev/./urandom','-jar','/app.jar']"
+    ]
+  }],
+  "provisioners":[
+    {
+      "type": "file",
+      "source": "{{user `artifact_name`}}",
+      "destination": "{{user `dest_file`}}"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -O wait-for-it.sh",
+        "chmod +x wait-for-it.sh",
+        "bash -c 'touch /{{user `dest_file`}}'"
+      ]
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "type": "docker-tag",
+        "repository": "petclinic.azurecr.io/petclinic/{{user `project`}}",
+        "tag": "latest"
+      },
+      {
+        "type": "docker-push",
+        "login_server" : "petclinic.azurecr.io",
+        "login_username" : "{{user `azure_registry_user`}}",
+        "login_password" : "{{user `azure_registry_pass`}}"
+      }
+    ]
+  ]
+}
