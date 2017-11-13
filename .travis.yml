@@ -15,6 +15,7 @@ language: java
 jdk: oraclejdk8
 
 before_install:
+- docker login petclinic.azurecr.io -u $REGISTRY_USER -p $REGISTRY_PASS
 - chmod +x scripts/install_dependencies.sh
 - scripts/install_dependencies.sh
 
