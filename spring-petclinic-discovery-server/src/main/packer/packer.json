@@ -4,7 +4,8 @@
     "artifact_name" : "{{env `ARTIFACT_NAME`}}",
     "dest_file" : "app.jar",
     "azure_registry_user" : "{{env `REGISTRY_USER`}}",
-    "azure_registry_pass" : "{{env `REGISTRY_PASS`}}"
+    "azure_registry_pass" : "{{env `REGISTRY_PASS`}}",
+    "docker_registry" : "{{env `DOCKER_REGISTRY`}}"
   },
   "builders":[{
     "type": "docker",
@@ -12,7 +13,8 @@
     "commit": "true",
     "changes": [
       "EXPOSE 8761",
-      "ENTRYPOINT ['java','-Djava.security.egd=file:/dev/./urandom','-jar','/app.jar']"
+      "CMD [\"-Djava.security.egd=file:/dev/urandom\",\"-jar\", \"/app.jar\"]",
+      "ENTRYPOINT [\"java\"]"
     ]
   }],
   "provisioners":[
@@ -34,12 +36,12 @@
     [
       {
         "type": "docker-tag",
-        "repository": "petclinic.azurecr.io/petclinic/{{user `project`}}",
+        "repository": "{{user `docker_registry`}}/petclinic/{{user `project`}}",
         "tag": "latest"
       },
       {
         "type": "docker-push",
-        "login_server" : "petclinic.azurecr.io",
+        "login_server" : "{{user `docker_registry`}}",
         "login_username" : "{{user `azure_registry_user`}}",
         "login_password" : "{{user `azure_registry_pass`}}"
       }
