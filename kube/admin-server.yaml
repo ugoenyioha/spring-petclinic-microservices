@@ -11,7 +11,6 @@ metadata:
   name: admin-server
 spec:
   replicas: 1
-  strategy: {}
   template:
     metadata:
       creationTimestamp: null
@@ -20,12 +19,20 @@ spec:
     spec:
       containers:
       - name: admin-server
-        image: petclinic.azurecr.io/petclinic/spring-petclinic-admin-server-1.5.3
+        image: mszarlinski/spring-petclinic-admin-server
+        command:
+          - ./wait-for-it.sh
+        args:
+          - discovery-server:8761
+            --timeout=60
+            --
+            java
+            -Djava.security.egd=file:/dev/./urandom
+            -jar
+            /app.jar
         ports:
         - containerPort: 9090
-        resources: {}
       restartPolicy: Always
-status: {}
 ---
 apiVersion: v1
 kind: Service
@@ -40,11 +47,9 @@ metadata:
   name: admin-server
 spec:
   ports:
-  - name: "9090"
+  - name: admin-server
     port: 9090
     targetPort: 9090
   selector:
     io.kompose.service: admin-server
-status:
-  loadBalancer: {}
 

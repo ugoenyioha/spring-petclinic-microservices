@@ -13,7 +13,7 @@
     "commit": "true",
     "changes": [
       "EXPOSE 8888",
-      "CMD [\"-Djava.security.egd=file:/dev/urandom\",\"-jar\", \"/app.jar\"]",
+      "CMD [\"-Djava.security.egd=file:/dev/./urandom\",\"-jar\", \"/app.jar\"]",
       "ENTRYPOINT [\"java\"]"
     ]
   }],
@@ -22,14 +22,6 @@
       "type": "file",
       "source": "{{user `artifact_name`}}",
       "destination": "{{user `dest_file`}}"
-    },
-    {
-      "type": "shell",
-      "inline": [
-        "wget https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -O wait-for-it.sh",
-        "chmod +x wait-for-it.sh",
-        "bash -c 'touch /{{user `dest_file`}}'"
-      ]
     }
   ],
   "post-processors": [

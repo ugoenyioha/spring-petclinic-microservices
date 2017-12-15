@@ -21,6 +21,7 @@ spec:
       containers:
       - command:
         - ./wait-for-it.sh
+        args:
         - discovery-server:8761
         - --timeout=60
         - --
@@ -35,3 +36,23 @@ spec:
         resources: {}
       restartPolicy: Always
 status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: C:\ProgramData\chocolatey\lib\kubernetes-kompose\tools\kompose.exe
+      --file docker-compose.yml convert
+    kompose.version: 1.4.0 (c7964e7)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: api-gateway
+  name: api-gateway
+spec:
+  type: LoadBalancer
+  ports:
+  - name: api-gateway
+    port: 8080
+    targetPort: 8080
+  selector:
+    io.kompose.service: api-gateway
